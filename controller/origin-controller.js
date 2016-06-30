@@ -3,6 +3,7 @@
 const debug = require('debug')('brewBuddy:origin-controller');
 const httpErrors = require('http-errors');
 const Origin = require('../model/origin');
+const Method = require('../model/brew-method');
 
 exports.createOrigin = function(originData) {
   debug('creating origin');
@@ -60,4 +61,20 @@ exports.fetchAllOrigins = function() {
 
 exports.removeAllOrigins = function() {
   return Origin.remove({});
+};
+///////////////////////////////////////////////////
+exports.fetchRecmethodByCountry = function(country) {
+  debug('search origin controller');
+  return new Promise((resolve, reject) => {
+    Origin.findOne({country: country})
+    .then((country) => country.recMethod)
+      // console.log('data????', country);
+
+    .then((recMethod) => Method.findOne({_id: recMethod}))
+    .then((recMethod) => {
+      console.log('loooooooggggg', recMethod);
+      resolve(recMethod);
+    })
+    .catch(reject);
+  });
 };

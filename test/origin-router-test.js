@@ -17,11 +17,13 @@ const port = process.env.PORT || 3000;
 const baseUrl =  `localhost:${port}/api`;
 const server = require('../server');
 
+
+
 request.use(superPromise);
 
 describe('testing module origin-router', () => {
   before((done) => {
-    debug('before module-auth');
+    // debug('before module-auth');
     if(!server.isRunning) {
       server.listen(port, () => {
         server.isRunning = true;
@@ -34,7 +36,7 @@ describe('testing module origin-router', () => {
   });
 
   after((done) => {
-    debug('after module auth-router');
+    // debug('after module auth-router');
     if (server.isRunning) {
       server.close(() => {
         server.isRunning = false;
@@ -314,5 +316,119 @@ describe('testing module origin-router', () => {
         });
       });
     });
+
+    describe('GET: /api/origin/search', () => {
+      var TOKEN;
+      var testOrigin = {};
+      before((done) => {
+        // let recMethod;
+
+        debug('1st BEFORE ????????');
+        debug('testOrigin:', testOrigin);
+        debug('TOKEN: ', TOKEN);
+
+        authController
+        .signup({username:'name', password:'pass'})
+        .then( (token) => {
+          TOKEN = token;
+          console.log('token back!!!!!!', TOKEN);
+        });
+        done();
+      });
+        // return
+      before((done)=>{
+        debug('2nd BEFORE ????????');
+        brewMethodController.createBrewMethod({
+          title: 'ABC'
+          , recipe: 'shity'
+          , brewRatio: 1
+          , brewTimer: 4
+        })
+        .then((brewMethod) => {
+          // return
+          originController.createOrigin({
+            country: 'Coolio',
+            recMethod: brewMethod._id
+          });
+        })
+        .then((origin) => {
+          testOrigin = origin;
+          done();
+        });
+      });
+
+
+      // });
+    // });
+
+      after((done) => {
+        debug('DROP THEM ALLLLLLL');
+        Promise.all([
+          userController.removeAllUsers(),
+          originController.removeAllOrigins(),
+          brewMethodController.removeAllBrewMethods()
+        ])
+        .then(() => done())
+        .catch(done);
+      });
+
+      it('should return country + recMethod', (done) => {
+        debug('~~~~~~~~~~~~search IT block', TOKEN);
+        request
+        .get(`${baseUrl}/origin/search?country=Coolio`)
+        .set({
+          Authorization: `Bearer ${TOKEN}`
+        })
+        .then((res) => {
+          debug('INSIDE TEST!!!!!!');
+          expect(res.status).to.equal(200);
+          done();
+        })
+        .catch(done);
+      });
+
+      // it('should return a 404 if no origin is found', (done) => {
+      //   request.get(`${baseUrl}/origin/fakeOrigin`)
+      //   .set({
+      //     // Authorization: `Bearer ${this.tempToken}`
+      //     Authorization: `Bearer ${TOKEN}`
+      //
+      //   })
+      //   .catch((err) => {
+      //     debug('inside catch!!!');
+      //     // debug('404 DEBUGGGGGGG');
+      //     // expect(err.response.status).to.equal(404);
+      //     // // expect(err.response.text).to.eql('NotFoundError');
+      //     // done();
+      //     try {
+      //       debug('404 DEBUGGGGGGG');
+      //       // console.log('err', err);
+      //       expect(err.response.status).to.equal(404);
+      //       expect(err.response.text).to.eql('NotFoundError');
+      //       done();
+      //     }
+      //       catch(err) {
+      //
+      //         // debug('EEEEwwwwwwww', err);
+      //         console.log('Eeeeeww', err);
+      //         done();
+      //       }
+      //     done();
+      //   });
+      // });
+
+      // it('should return a 401 if no token is sent', (done) => {
+      //   request.get(`${baseUrl}/origin/search?country=Coolio`)
+      //   .then(done)
+      //   .catch((err) => {
+      //     debug('DEBUG 2');
+      //     expect(err.response.status).to.equal(401);
+      //     expect(err.response.text).to.eql('UnauthorizedError');
+      //     done();
+      //   })
+      //   .catch(done);
+      // });
+    });
+
   });
 });

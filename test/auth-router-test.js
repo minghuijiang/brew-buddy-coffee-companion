@@ -10,9 +10,11 @@ const debug = require('debug')('brewBuddy:auth-router-test');
 const userController = require('../controller/user-controller');
 const authController = require('../controller/auth-controller');
 
+
 const port = process.env.PORT || 3000;
 const baseURL = `localhost:${port}/api`;
 const server = require('../server');
+// const manageServer = require('./manageServer');
 
 request.use(superPromise);
 

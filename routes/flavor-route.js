@@ -19,7 +19,6 @@ flavorRouter.post('/flavor', jsonParser, parserBearerAuth, function(req, res, ne
   .catch(next);
 });
 
-
 flavorRouter.get('/flavor/:id',parserBearerAuth, function(req, res, next){
   debug('get /flavor/:id');
   flavorController.fetchFlavor(req.params.id)

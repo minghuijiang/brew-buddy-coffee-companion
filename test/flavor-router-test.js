@@ -8,7 +8,6 @@ const request = require('superagent-use');
 const superPromise = require('superagent-promise-plugin');
 const debug = require('debug')('brewbuddie:flavor-router-test');
 
-
 const flavorController = require('../controller/flavor-controller');
 const authController = require('../controller/auth-controller');
 const userController = require('../controller/user-controller');
@@ -220,4 +219,5 @@ describe('testing module flavor-router', () => {
       }).catch(done);
     });
   });
+
 });
